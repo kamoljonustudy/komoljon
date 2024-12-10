@@ -71,3 +71,37 @@ async def start(message: types.Message):
     await message.answer(f"Assalomu aleykum! Les Ailes yetkaziv berish xizmatiga xush kelibsiz!\n"
                          f"Iltimos telefon raqamingizni kiriting:", reply_markup=keyboard)
     print(1, user_data)
+
+
+async def send_code(message: types.Message):
+    user_id = message.from_user.id
+    if message.contact is not None:
+        phone = message.contact.phone_number
+    else:
+        phone = message.text
+    flag = False
+    if phone[0:4] == '+998' or phone[0:3] == '998':
+        if len(phone) == 13:
+            phone = phone[1:]
+        if len(phone) == 12:
+            phone = phone
+        for s in phone:
+            if s in '0123456789':
+                flag = True
+            else:
+                flag = False
+                break
+    if flag == True:
+        user_data[user_id]['phone'] = phone
+        verification_code = random.randint(1000, 9999)
+        user_data[user_id]['verification_code'] = verification_code
+        try:
+            token = get_eskiz_token(email, password)
+            send_sms(phone, token)
+            await message.answer(f"Iltimos tasdiqlash raqamini kiriting:{verification_code}")
+        except Exception as ex:
+            await message.answer(f"{ex}")
+
+    else:
+        await message.answer("To'g'ri raqam kiriting")
+    print(2, user_data)
