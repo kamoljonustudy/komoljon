@@ -105,3 +105,15 @@ async def send_code(message: types.Message):
     else:
         await message.answer("To'g'ri raqam kiriting")
     print(2, user_data)
+
+
+async def check_code(message: types.Message):
+    user_id = message.from_user.id
+    sent_code = message.text
+    verification_code = user_data[user_id]["verification_code"]
+    if str(verification_code) == sent_code:
+        await message.answer("Siz ro'yxatdan o'tdingiz!\n")
+        await address(message)
+    else:
+        await message.answer(f"Noto'g'ri kod. Qaytadan kiriting.")
+    print(3, user_data)
